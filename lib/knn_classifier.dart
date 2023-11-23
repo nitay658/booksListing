@@ -3,22 +3,28 @@ import 'dart:math';
 import 'book_database.dart';
 
 class KnnClassifier {
-  final List<Book> trainingData;
+  late List<Book> _trainingData;
   final double weightAverageRating = 1.0;
   final double weightRatingsCount = 1.0;
   final double weightTextReviewsCount = 1.0;
   final double weightAuthors = 2.0;
 
-  KnnClassifier({
-    required this.trainingData,
-  });
+  KnnClassifier();
 
-  List<Book> classifyList(List<Book> books, int k) {
+  List<Book> classifyList(trainingData, List<Book> books, int k) {
+    _trainingData = trainingData;
     List<Book> classifications = [];
 
     for (var book in books) {
       Book classification = classify(book, k);
-      if (!books.contains(classification)) {
+      bool clear = true;
+      for (var run in books) {
+        // Check if the classification is not already in the books list
+        if (run.isbn == classification.isbn) {
+          clear = false;
+        }
+      }
+      if(clear){
         classifications.add(classification);
       }
     }
@@ -29,7 +35,7 @@ class KnnClassifier {
   Book classify(Book data, int k) {
     final List<Map<String, dynamic>> distances = [];
 
-    for (var trainingPoint in trainingData) {
+    for (var trainingPoint in _trainingData) {
       if (data.isbn != trainingPoint.isbn) {
         final double distance = calculateDistance(data, trainingPoint);
         distances.add({'distance': distance, 'target': trainingPoint});

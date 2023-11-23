@@ -55,6 +55,18 @@ class Book {
   }
 }
 
+Set<String> fieldList() {
+    return {'isbn', // Add the ISBN field if it's part of your data
+      'title',
+      'authors',
+      'average_rating',
+      'num_of_pages',
+      'ratings_count',
+      'text_reviews_count',
+      'publication_date',
+      'book_image',};
+  }
+
 class DatabaseService {
   final String userEmail;
 
