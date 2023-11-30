@@ -53,19 +53,33 @@ class Book {
           bookImage, // Add the actual field name to your Firestore document
     };
   }
+
+  static empty() {return Book(
+      isbn: '',
+      title: '',
+      authors: '',
+      averageRating: 0.0,
+      numPages: 0,
+      ratingsCount: 0,
+      textReviewsCount: 0,
+      publication_date: 1950,
+      bookImage: '',
+    );}
 }
 
 Set<String> fieldList() {
-    return {'isbn', // Add the ISBN field if it's part of your data
-      'title',
-      'authors',
-      'average_rating',
-      'num_of_pages',
-      'ratings_count',
-      'text_reviews_count',
-      'publication_date',
-      'book_image',};
-  }
+  return {
+    'isbn', // Add the ISBN field if it's part of your data
+    'title',
+    'authors',
+    'average_rating',
+    'num_of_pages',
+    'ratings_count',
+    'text_reviews_count',
+    'publication_date',
+    'book_image',
+  };
+}
 
 class DatabaseService {
   final String userEmail;
@@ -83,6 +97,15 @@ class DatabaseService {
         .collection('books-to-read')
         .doc(book.isbn)
         .set(book.toMap());
+  }
+
+  Future<void> removeUserBook(Book book) async {
+    // Remove the book from Firestore
+    await userBooksCollection
+        .doc(userEmail)
+        .collection('books-to-read')
+        .doc(book.isbn)
+        .delete();
   }
 
   Future<void> addBook(Book book) async {

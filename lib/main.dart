@@ -3,7 +3,6 @@ import 'package:books_app/book_database.dart';
 import 'package:books_app/firebase_options.dart';
 import 'package:books_app/navigat_app_page.dart';
 import 'package:books_app/register_login.dart';
-import 'package:csv/csv.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,10 +17,10 @@ void main() async {
     MaterialApp(
       title: 'Books_Listing',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF21BFBD)),
         useMaterial3: true,
       ),
-      home: const NavigatAppPage(), //fix
+      home: const RegisterView(),
     ),
   );
 }
@@ -49,7 +48,7 @@ class YourHomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Your App'),
       ),
-      body: const AddBookToDataBasePage(userEmail:'nitayv@gmail.com'),
+      body: const AddBookToDataBasePage(userEmail:'nitayv658@gmail.com'),
     );
   }
 }

@@ -7,26 +7,22 @@ class KnnClassifier {
   final double weightAverageRating = 1.0;
   final double weightRatingsCount = 1.0;
   final double weightTextReviewsCount = 1.0;
-  final double weightAuthors = 2.0;
+  final double weightAuthors = 3.0;
 
   KnnClassifier();
 
-  List<Book> classifyList(trainingData, List<Book> books, int k) {
+  List<Book> classifyList(List<Book> trainingData, List<Book> books, int k) {
     _trainingData = trainingData;
     List<Book> classifications = [];
 
     for (var book in books) {
-      Book classification = classify(book, k);
-      bool clear = true;
-      for (var run in books) {
-        // Check if the classification is not already in the books list
-        if (run.isbn == classification.isbn) {
-          clear = false;
+      // Check if the book is not already in the recommendations list
+      //if (!classifications.any((b) => b.isbn == book.isbn)) {
+        Book classification = classify(book, k);
+        if (!books.any((b) => b.isbn == classification.isbn)) {
+          classifications.add(classification);
         }
-      }
-      if(clear){
-        classifications.add(classification);
-      }
+      //}
     }
 
     return classifications;
@@ -48,27 +44,38 @@ class KnnClassifier {
     final List<Book> neighbors =
         distances.sublist(0, k).map((e) => e['target'] as Book).toList();
 
-    // Optionally, you might want to implement a more sophisticated way to combine information from neighbors
+    // Combine information from neighbors
+    return combineNeighbors(neighbors);
+  }
+
+  Book combineNeighbors(List<Book> neighbors) {
+    // Implement a more sophisticated way to combine information from neighbors
     // For now, just return the first neighbor as an example
-    return neighbors.isNotEmpty ? neighbors.first : data;
+    return neighbors.isNotEmpty ? neighbors.first : Book.empty();
   }
 
-  double calculateDistance(Book data1, Book data2) {
-    double diffAverageRating =
-        (data1.averageRating - data2.averageRating) * weightAverageRating;
-    double diffRatingsCount =
-        (data1.ratingsCount - data2.ratingsCount) * weightRatingsCount;
-    double diffTextReviewsCount =
-        (data1.textReviewsCount - data2.textReviewsCount) *
-            weightTextReviewsCount;
-    double diffAuthors =
-        (data1.authors == data2.authors) ? 0.0 : 1.0 * weightAuthors;
+double calculateDistance(Book data1, Book data2) {
+  double diffAverageRating =
+      (data1.averageRating - data2.averageRating) * weightAverageRating;
+  double diffRatingsCount =
+      (data1.ratingsCount - data2.ratingsCount) * weightRatingsCount;
+  double diffTextReviewsCount =
+      (data1.textReviewsCount - data2.textReviewsCount) *
+          weightTextReviewsCount;
+  double diffAuthors = calculateAuthorDifference(data1.authors, data2.authors) * weightAuthors;
 
-    double distance = sqrt(pow(diffAverageRating, 2) +
-        pow(diffRatingsCount, 2) +
-        pow(diffTextReviewsCount, 2) +
-        pow(diffAuthors, 2));
+  double distance = sqrt(pow(diffAverageRating, 2) +
+      pow(diffRatingsCount, 2) +
+      pow(diffTextReviewsCount, 2) +
+      pow(diffAuthors, 2));
 
-    return distance;
-  }
+  return distance;
+}
+
+double calculateAuthorDifference(String author1, String author2) {
+  // You can customize this function to calculate the difference between authors.
+  // For simplicity, let's consider them similar if they are the same.
+  return (author1 == author2) ? 0.0 : 2.0;
+}
+
 }
