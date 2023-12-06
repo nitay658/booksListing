@@ -1,6 +1,6 @@
 # books_app
 
-A new Flutter project.
+A Book App using Flutter with Firebase. listing a book list based on DataBase. base on this list creating a recommendation book list usig Knn algorithm.
 
 ## Getting Started
 
